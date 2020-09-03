@@ -6,21 +6,21 @@ from player import Player
 
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons", "true"),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+passages run north and east.""", "false"),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
+the distance, but there is no way across the chasm.""", "false"),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
+to north. The smell of gold permeates the air.""", "false"),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+earlier adventurers. The only exit is to the south.""", "false"),
 }
 
 
@@ -84,12 +84,7 @@ def clear():
 # |------------|
 # 
 
-currentRoom = room["outside"]
-direct = ""
-while direct != 'q':
-    clear()
-
-    # Dynamically building map showing player position. See Model above
+def drawmap1():
     print("               MAP\n")
     print(" |------------|   |------------|\n |            |   |            |\n |  Overlook  |   |  Treasure  |")
     if currentRoom.name == "Grand Overlook":
@@ -111,7 +106,100 @@ while direct != 'q':
     else:
         print(" |            |")
     print(" |------------|\n")
-    # End of Map
+
+
+# ---Version 2---
+def drawmap2(): # This one uses fog --> rooms become discoverable
+    print("               MAP\n")
+    if room['overlook'].discovered == "false":
+        if room['treasure'].discovered == "false":
+            print("\n\n")
+        else:
+            print("                  |------------|\n                  |            |\n                  |  Treasure  |")
+    else:
+        if room['treasure'].discovered == "false":
+            print(" |------------|\n |            |\n |  Overlook  |")
+        else:
+            print(" |------------|   |------------|\n |            |   |            |\n |  Overlook  |   |  Treasure  |")
+    if currentRoom.name == "Grand Overlook":
+        if room['treasure'].discovered == "false":
+            print(" |     X      |")
+        else:
+            print(" |     X      |   |            |")
+    elif currentRoom.name == "Treasure Chamber":
+        if room['overlook'].discovered == "false":
+            print("                  |      X     |")
+        else:
+            print(" |            |   |      X     |")
+    else:
+        if room['overlook'].discovered == "false":
+            if room['treasure'].discovered == "false":
+                print()
+            else:
+                print("                  |            |")
+        else:
+            if room['treasure'].discovered == "false":
+                print(" |            |")
+            else:
+                print(" |            |   |            |")
+    if room['overlook'].discovered == "false":
+        if room['treasure'].discovered == "false":
+            print("\n")
+        else:
+            print("                  |----|  |----|\n                       |  |")
+    else:
+        if room['treasure'].discovered == "false":
+            print(" |----|  |----|\n      |  |")
+        else:
+            print(" |----|  |----|   |----|  |----|\n      |  |             |  |")
+    if room['foyer'].discovered == "false":
+        # Then the Narrow also hasn't been discovered
+        print("\n\n")
+    else:
+        if room['narrow'].discovered == "false":
+            print(" |----|  |----|\n |            --\n |   Foyer")
+        else:
+            print(" |----|  |----|   |----|  |----|\n |            -----            |\n |   Foyer            Narrow   |")
+    if currentRoom.name == "Foyer":
+        if room['narrow'].discovered == "false":
+            print(" |     X      --")
+        else:
+            print(" |     X      -----            |")
+    elif currentRoom.name == "Narrow Passage":
+        # The Foyer must already be discovered, so no nested if-else statements needed
+        print(" |            -----      X     |")
+    else:
+        # Test if either room had been discovered, like normal
+        if room['foyer'].discovered == "false":
+            # Then the Narrow also hasn't been discovered
+            print()
+        else:
+            if room['narrow'].discovered == "false":
+                print(" |            --")
+            else:
+                print(" |            -----            |")
+    if room['foyer'].discovered == "false":
+        # Then the Narrow also hasn't been discovered
+        print("\n")
+    else:
+        if room['narrow'].discovered == "false":
+            print(" |----|  |----|\n      |  |")
+        else:
+            print(" |----|  |----|   |------------|\n      |  |")
+    print(" |----|  |----|\n |            |\n |  Outside   |")
+    if currentRoom.name == "Outside Cave Entrance":
+        print(" |     X      |")
+    else:
+        print(" |            |")
+    print(" |------------|\n")
+
+
+
+currentRoom = room["outside"]
+direct = ""
+while direct != 'q':
+    clear()
+    drawmap2()
     
     print(f"{currentRoom.name}")
     print(f"{currentRoom.description}")
@@ -121,26 +209,39 @@ while direct != 'q':
             try:
                 currentRoom = currentRoom.n_to
                 print("Going to:", currentRoom.name)
+                currentRoom.discovered = "true"
             except:
                 print("Can't go there, boss.")
         elif direct is 's':
             try:
                 currentRoom = currentRoom.s_to
                 print("Going to:", currentRoom.name)
+                currentRoom.discovered = "true"
             except:
-                print("Can't go there, boss.")
+                if currentRoom.name == "Outside Cave Entrance":
+                    print("You wander around aimlessly outside.")
+                else:
+                    print("Can't go there, boss.")
         elif direct is 'e':
             try:
                 currentRoom = currentRoom.e_to
                 print("Going to:", currentRoom.name)
+                currentRoom.discovered = "true"
             except:
-                print("Can't go there, boss.")
+                if currentRoom.name == "Outside Cave Entrance":
+                    print("You wander around aimlessly outside.")
+                else:
+                    print("Can't go there, boss.")
         else:
             try:
                 currentRoom = currentRoom.w_to
                 print("Going to:", currentRoom.name)
+                currentRoom.discovered = "true"
             except:
-                print("Can't go there, boss.")
+                if currentRoom.name == "Outside Cave Entrance":
+                    print("You wander around aimlessly outside.")
+                else:
+                    print("Can't go there, boss.")
         input("Press ENTER to continue.")
     elif direct is 'q':
         pass
