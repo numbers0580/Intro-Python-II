@@ -1,3 +1,4 @@
+from os import system, name
 from room import Room
 from player import Player
 
@@ -37,9 +38,10 @@ room['treasure'].s_to = room['narrow']
 #
 # Main
 #
+mygame = Player("Jacks Treasure Hunt", [room["outside"], room["foyer"], room["overlook"], room["narrow"], room["treasure"]])
 
 # Make a new player object that is currently in the 'outside' room.
-myhero = Player("Jack")
+# myhero = Player("Jack")
 
 # Write a loop that:
 #
@@ -52,6 +54,97 @@ myhero = Player("Jack")
 #
 # If the user enters "q", quit the game.
 
-selection = ""
-while selection != 'q':
-    selection = input("Where to, boss? (n, s, e, w): ")
+# I got the following code from: https://www.geeksforgeeks.org/clear-screen-python/
+def clear():
+    if name == 'nt':
+        _ = system('cls')
+    else:
+        _ = system('clear')
+# ------Clear Screen Method Above--------------
+
+
+#               MAP
+# 
+# |------------|   |------------|
+# |            |   |            |
+# |  Overlook  |   |  Treasure  |
+# |            |   |            |
+# |----|  |----|   |----|  |----|
+#      |  |             |  |
+# |----|  |----|   |----|  |----|
+# |            -----            |
+# |   Foyer            Narrow   |
+# |            -----            |
+# |----|  |----|   |------------|
+#      |  |
+# |----|  |----|
+# |            |
+# |  Outside   |
+# |            |
+# |------------|
+# 
+
+currentRoom = room["outside"]
+direct = ""
+while direct != 'q':
+    clear()
+
+    # Dynamically building map showing player position. See Model above
+    print("               MAP\n")
+    print(" |------------|   |------------|\n |            |   |            |\n |  Overlook  |   |  Treasure  |")
+    if currentRoom.name == "Grand Overlook":
+        print(" |     X      |   |            |")
+    elif currentRoom.name == "Treasure Chamber":
+        print(" |            |   |      X     |")
+    else:
+        print(" |            |   |            |")
+    print(" |----|  |----|   |----|  |----|\n      |  |             |  |\n |----|  |----|   |----|  |----|\n |            -----            |\n |   Foyer            Narrow   |")
+    if currentRoom.name == "Foyer":
+        print(" |     X      -----            |")
+    elif currentRoom.name == "Narrow Passage":
+        print(" |            -----      X     |")
+    else:
+        print(" |            -----            |")
+    print(" |----|  |----|   |------------|\n      |  |\n |----|  |----|\n |            |\n |  Outside   |")
+    if currentRoom.name == "Outside Cave Entrance":
+        print(" |     X      |")
+    else:
+        print(" |            |")
+    print(" |------------|\n")
+    # End of Map
+    
+    print(f"{currentRoom.name}")
+    print(f"{currentRoom.description}")
+    direct = input("Where to, boss? (n, s, e, w): ")
+    if direct is 'n' or direct is 's' or direct is 'e' or direct is 'w':
+        if direct is 'n':
+            try:
+                currentRoom = currentRoom.n_to
+                print("Going to:", currentRoom.name)
+            except:
+                print("Can't go there, boss.")
+        elif direct is 's':
+            try:
+                currentRoom = currentRoom.s_to
+                print("Going to:", currentRoom.name)
+            except:
+                print("Can't go there, boss.")
+        elif direct is 'e':
+            try:
+                currentRoom = currentRoom.e_to
+                print("Going to:", currentRoom.name)
+            except:
+                print("Can't go there, boss.")
+        else:
+            try:
+                currentRoom = currentRoom.w_to
+                print("Going to:", currentRoom.name)
+            except:
+                print("Can't go there, boss.")
+        input("Press ENTER to continue.")
+    elif direct is 'q':
+        pass
+    else:
+        print("I don't understand that direction. What alien map are you using? Please try again.")
+        input("Press ENTER to continue.")
+print("Thanks for playing")
