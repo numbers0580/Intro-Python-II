@@ -256,7 +256,7 @@ while direct != 'q':
 
     # R - Read input
     # q - quit
-    direct = input("Where to, boss? (n, s, e, w, c, i, q: ")
+    direct = input("Where to, boss? (n, s, e, w, c, i, q): ")
     # E - Evaluate
     if direct is 'n' or direct is 's' or direct is 'e' or direct is 'w' or direct is 'c' or direct is 'i':
         tempcoins = 0 # Initially sets coins to 0 just in case fortune randomizer doesn't generate any coins
@@ -298,7 +298,7 @@ while direct != 'q':
                 myhero.currentRoom.discovered = "true"
                 randcoins = tempcoins
                 roomitem = tempitem
-                # Note to future self: The 3 lines of code below placed here in "try" ALWAYS ended up running the "except" fpr some reason
+                # Note to future self: The 3 lines of code below placed here in "try" ALWAYS ended up running the "except" for some reason
                 #fortune = randint(1, 4)
                 #if fortune == 4:
                 #    randcoins = randint(1, 25)
