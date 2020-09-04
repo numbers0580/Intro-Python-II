@@ -262,12 +262,12 @@ while direct != 'q':
         tempcoins = 0
         tempitem = Item("NONE", "N/A", 0, 0, 0, 0)
 
-        fortune = random.randint(1, 4)
+        fortune = random.randint(1, 8) # Re-adjusted odds to make combined chance of finding items or coins = 50% total
 
-        if fortune is 4:
+        if fortune is 7: # Arbitrary random number value to luckily find coins. Odds at 25% of the above 50% = 12.5%
             tempcoins = random.randint(1, 25)
 
-        if fortune is 2 or fortune is 3:
+        if fortune is 2 or fortune is 5: # Arbitrary random number values. Odds at 50% of the above 50% = 25%
             #25, 12, 8, 5 -- 30, 10 -- 30, 15 -- 50, 15 = 200
             whichitem = random.randint(1, 200)
             if whichitem >= 1 and whichitem <= 25:
