@@ -7,7 +7,7 @@ class Player:
         self.name = name
         self.currentRoom = startingRoom
         self.coins = coins
-        self.item = [] # Not initialized as a parameter since player starts with 0 items
+        #self.item = [] # Not initialized as a parameter since player starts with 0 items # NOT CURRENTLY USING, BUT I MAY CHANGE MY MIND
         self.wpn = Item("Fists", "N/A", 1, 0, 0, 0)
         self.shld = Item("Body", "N/A", 0, 1, 0, 0)
         self.shoe = Item("Bare Feet", "N/A", 0, 0, 1, 0)
