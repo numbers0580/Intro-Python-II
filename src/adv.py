@@ -217,11 +217,14 @@ direct = ""
 randcoins = 0
 roomitem = Item("NONE", "N/A", 0, 0, 0, 0)
 while direct != 'q':
+    # Clears the Console screen before re-drawing
     clear()
+
+    # Checks player's current position, checks rooms discovery states, and redraws the map accordingly
     drawmap2()
+    # drawmap1() # This version of the map doesn't have a fog algorithm, it just shows the entire map
     
     # print(f"TESTING ITEM FOUND: {roomitem.name}") # Works!
-    # print(f"TESTING ARRAY #S: {myhero.wpn.name}, {myhero.shld.name}, {myhero.shoe.name}")
     print(f"{myhero.name} is in the {myhero.currentRoom.name}\n{myhero.currentRoom.description}\n")
     myweap = myhero.wpn.name
     myshield = myhero.shld.name
@@ -230,8 +233,7 @@ while direct != 'q':
     print(f"Equipped: {myhero.wpn.name},  {myhero.shld.name},  {myhero.shoe.name}")
     print(f"ATK: {myhero.wpn.atk}, DEF: {myhero.shld.dfns}, SPD: {myhero.shoe.spd}, HP: {myhero.hp}, COINS: {myhero.coins}     ENEMIES DEFEATED: {myhero.won}/20\n")
 
-
-
+    # Checks for any random items (Weapons, Shields, Shoes, Food)
     if roomitem.name != "NONE" and myhero.currentRoom.name != "Outside Cave Entrance":
         if roomitem.name == "Table Leg" or roomitem.name == "Chipped Dagger" or roomitem.name == "Small Hatchet" or roomitem.name == "Gladius":
             print(f"As you make your way through the mess, you find: {roomitem.name} -- ATK: {roomitem.atk}")
@@ -245,22 +247,20 @@ while direct != 'q':
         # This is only really checking to make sure the player is not Outside. Removing random item if so
         roomitem = Item("NONE", "N/A", 0, 0, 0, 0)
 
-
-
+    # Checks for any random coins in the room
     if randcoins > 0:
         if randcoins == 1:
             print(f"You see {randcoins} coin glinting in the distance.")
         else:
             print(f"You see {randcoins} coins glinting in the distance.")
 
-
-
     # R - Read input
-    direct = input("Where to, boss? (n, s, e, w, c, i): ")
+    # q - quit
+    direct = input("Where to, boss? (n, s, e, w, c, i, q: ")
     # E - Evaluate
     if direct is 'n' or direct is 's' or direct is 'e' or direct is 'w' or direct is 'c' or direct is 'i':
-        tempcoins = 0
-        tempitem = Item("NONE", "N/A", 0, 0, 0, 0)
+        tempcoins = 0 # Initially sets coins to 0 just in case fortune randomizer doesn't generate any coins
+        tempitem = Item("NONE", "N/A", 0, 0, 0, 0) # Initially sets tempitem to Nothing just in case fortune randomizer doesn't create an item
 
         fortune = random.randint(1, 8) # Re-adjusted odds to make combined chance of finding items or coins = 50% total
 
@@ -290,7 +290,6 @@ while direct != 'q':
                 tempitem = item['milkshake']
             else:
                 tempitem = item['burger']
-        # roomitem = tempitem
         if direct is 'n':
             try:
                 myhero.currentRoom = myhero.currentRoom.n_to
@@ -299,6 +298,7 @@ while direct != 'q':
                 myhero.currentRoom.discovered = "true"
                 randcoins = tempcoins
                 roomitem = tempitem
+                # Note to future self: The 3 lines of code below placed here in "try" ALWAYS ended up running the "except" fpr some reason
                 #fortune = randint(1, 4)
                 #if fortune == 4:
                 #    randcoins = randint(1, 25)
