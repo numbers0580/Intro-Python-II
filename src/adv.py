@@ -47,15 +47,15 @@ room['treasure'].s_to = room['narrow']
 # mygame = Player("Jacks Treasure Hunt", [room["outside"], room["foyer"], room["overlook"], room["narrow"], room["treasure"]])
 # However, I do think the depts -> store model applies to item -> room for this game
 item = {
-    'dagger': Item("Chipped Dagger", "A worn but still serviceable blade.", 5, 0, 0, 0),
-    'buckler': Item("Wooden Buckler", "A simple shield to hide behind. And look, only 3 termites!", 0, 4, 0, 0),
-    'hatchet': Item("Small Hatchet", "Not much reach, but well-balanced.", 6, 0, 0, 0),
-    'sandals': Item("Discarded Sandals", "A free donation from the previous dinner guest.", 0, 0, 3, 0),
+    'dagger': Item("Chipped Dagger", "A worn but still serviceable blade.", 8, 0, 0, 0),
+    'buckler': Item("Wooden Buckler", "A simple shield to hide behind. And look, only 3 termites!", 0, 5, 0, 0),
+    'hatchet': Item("Small Hatchet", "Not much reach, but well-balanced.", 10, 0, 0, 0),
+    'sandals': Item("Discarded Sandals", "A free donation from the previous dinner guest.", 0, 0, 5, 0),
     'burger': Item("Partially-eaten Hamburger", "Only one bite taken. What a find!", 0, 0, 0, 20),
     'aegis': Item("Aegis Shield", "An ancient round shield from a lost civilization", 0, 10, 0, 0),
-    'boots': Item("Leather Boots", "They're only slightly smelly!", 0, 0, 8, 0),
-    'club': Item("Table Leg", "A broken part of a table. Would make a good club, though", 3, 0, 0, 0),
-    'gladius': Item("Gladius", "A well-made, lightweight short-sword from an ancient civilization.", 10, 0, 0, 0),
+    'boots': Item("Leather Boots", "They're only slightly smelly!", 0, 0, 9, 0),
+    'club': Item("Table Leg", "A broken part of a table. Would make a good club, though", 5, 0, 0, 0),
+    'gladius': Item("Gladius", "A well-made, lightweight short-sword from an ancient civilization.", 15, 0, 0, 0),
     'milkshake': Item("Warm leftover Milkshake", "Don't think too much about it. Just pinch your nose and enjoy!", 0, 0, 0, 10)
 }
 
@@ -223,19 +223,22 @@ def fightevent():
 
     e_name = random.randint(1, 3)
     e_atk = 0
+    e_def = 0
 
-    if myhero.wpn.atk < 4:
+    if myhero.wpn.atk < 6:
         # Bats, Rats, Spiders
-        e_atk = random.randint(1, 3)
+        e_atk = random.randint(1, 4)
+        e_def = random.randint(0, 2)
         if e_name is 1:
             setname = "Bat"
         elif e_name is 2:
             setname = "Rat"
         else:
             setname = "Spider"
-    elif myhero.wpn.atk >= 4 and myhero.wpn.atk < 7:
+    elif myhero.wpn.atk >= 6 and myhero.wpn.atk < 11:
         # Spiders, Goblins, Possessed Dolls
-        e_atk = random.randint(2, 6)
+        e_atk = random.randint(2, 8)
+        e_def = random.randint(1, 5)
         if e_name is 1:
             setname = "Spider"
         elif e_name is 2:
@@ -244,7 +247,8 @@ def fightevent():
             setname = "Possessed Doll"
     else:
         # Possessed Dolls, Vampires, Skeletons
-        e_atk = random.randint(4, 8)
+        e_atk = random.randint(5, 10)
+        e_def = random.randint(3, 8)
         if e_name is 1:
             setname = "Possessed Doll"
         elif e_name is 2:
@@ -254,20 +258,23 @@ def fightevent():
 
     e_hp = 0
     e_qty = 0
-    if currentenemy.name is "Bat" or currentenemy.name is "Rat":
-        e_hp = random.randint(5, 10)
+    if setname is "Bat" or setname is "Rat":
+        e_hp = random.randint(5, 12)
         e_qty = random.randint(2, 4)
-    elif currentenemy.name is "Spider":
-        e_hp = random.randint(8, 16)
+    elif setname is "Spider":
+        e_hp = random.randint(8, 18)
         e_qty = random.randint(2, 3)
-    elif currentenemy.name is "Goblin" or currentenemy.name is "Possessed Doll":
-        e_hp = random.randint(12, 21)
+    elif setname is "Goblin" or setname is "Possessed Doll":
+        e_hp = random.randint(13, 21)
         e_qty = random.randint(1, 3)
     else:
         e_hp = random.randint(17, 26)
         e_qty = random.randint(1, 2)
 
-    currentenemy = Enemy(setname, e_qty, e_atk, random.randint(0, myhero.wpn.atk - 1), random.randint(1, int(myhero.shoe.spd * 2.5)), e_hp)
+    if e_def >= myhero.wpn.atk:
+        e_def = myhero.wpn.atk - 1
+
+    currentenemy = Enemy(setname, e_qty, e_atk, e_def, random.randint(1, int(myhero.shoe.spd * 2.5)), e_hp)
 
     # 3 lines of code below works!
     print(f"Test Enemy: name = {currentenemy.name}, qty = {currentenemy.qty}, atk = {currentenemy.atk}, def = {currentenemy.dfns}, spd = {currentenemy.spd}, hp = {currentenemy.hp}")
@@ -317,6 +324,8 @@ def fightevent():
             if myhero.hp <= 0:
                 print(f"Unfortunately, you died an embarassingly inglorious death at the hands of {currentenemy.name}s")
                 print("Game Over!")
+
+    input("Fight ended. Press ENTER to continue.")
 
 
 
@@ -480,8 +489,8 @@ direct = ""
 randcoins = 0
 roomitem = Item("NONE", "N/A", 0, 0, 0, 0)
 while direct != 'q' and myhero.hp > 0:
-    fightchance = random.randint(1, 5)
-    if fightchance is 4 and myhero.currentRoom.name != "Outside Cave Entrance":
+    fightchance = random.randint(1, 10)
+    if fightchance is 3 and myhero.currentRoom.name != "Outside Cave Entrance":
         fightevent()
 
     if myhero.hp > 0:
@@ -535,8 +544,8 @@ while direct != 'q' and myhero.hp > 0:
                 tempcoins = random.randint(1, 25)
 
             if fortune is 2 or fortune is 5: # Arbitrary random number values. Odds at 50% of the above 50% = 25%
-                #25, 12, 8, 5 -- 30, 10 -- 30, 15 -- 50, 15 = 200
-                whichitem = random.randint(1, 200)
+                #25, 12, 8, 5 -- 30, 10 -- 30, 15 -- 80, 35 = 250
+                whichitem = random.randint(1, 250)
                 if whichitem >= 1 and whichitem <= 25:
                     tempitem = item['club']
                 elif whichitem >= 26 and whichitem <= 37:
@@ -553,7 +562,7 @@ while direct != 'q' and myhero.hp > 0:
                     tempitem = item['sandals']
                 elif whichitem >= 121 and whichitem <= 135:
                     tempitem = item['boots']
-                elif whichitem >= 136 and whichitem <= 185:
+                elif whichitem >= 136 and whichitem <= 215:
                     tempitem = item['milkshake']
                 else:
                     tempitem = item['burger']
