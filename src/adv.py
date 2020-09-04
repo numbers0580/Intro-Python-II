@@ -45,15 +45,15 @@ room['treasure'].s_to = room['narrow']
 # mygame = Player("Jacks Treasure Hunt", [room["outside"], room["foyer"], room["overlook"], room["narrow"], room["treasure"]])
 # However, I do think the depts -> store model applies to item -> room for this game
 item = {
-    'dagger': Item("Chipped Dagger", "A worn but still serviceable blade.", 4, 0, 0, 0),
-    'buckler': Item("Wooden Buckler", "A simple shield to hide behind. And look, only 3 termites!", 0, 3, 0, 0),
-    'hatchet': Item("Small Hatchet", "Not much reach, but well-balanced.", 5, 0, 0, 0),
+    'dagger': Item("Chipped Dagger", "A worn but still serviceable blade.", 5, 0, 0, 0),
+    'buckler': Item("Wooden Buckler", "A simple shield to hide behind. And look, only 3 termites!", 0, 4, 0, 0),
+    'hatchet': Item("Small Hatchet", "Not much reach, but well-balanced.", 6, 0, 0, 0),
     'sandals': Item("Discarded Sandals", "A free donation from the previous dinner guest.", 0, 0, 3, 0),
     'burger': Item("Partially-eaten Hamburger", "Only one bite taken. What a find!", 0, 0, 0, 20),
     'aegis': Item("Aegis Shield", "An ancient round shield from a lost civilization", 0, 10, 0, 0),
     'boots': Item("Leather Boots", "They're only slightly smelly!", 0, 0, 8, 0),
     'club': Item("Table Leg", "A broken part of a table. Would make a good club, though", 3, 0, 0, 0),
-    'gladius': Item("Gladius", "A well-made, lightweight short-sword from an ancient civilization.", 9, 0, 0, 0),
+    'gladius': Item("Gladius", "A well-made, lightweight short-sword from an ancient civilization.", 10, 0, 0, 0),
     'milkshake': Item("Warm leftover Milkshake", "Don't think too much about it. Just pinch your nose and enjoy!", 0, 0, 0, 10)
 }
 
@@ -215,30 +215,46 @@ def drawmap2(): # This one uses fog --> rooms become discoverable
 # currentRoom = room["outside"]
 direct = ""
 randcoins = 0
-roomitem = Item("DEFAULT", "N/A", 0, 0, 0, 0)
+roomitem = Item("NONE", "N/A", 0, 0, 0, 0)
 while direct != 'q':
     clear()
     drawmap2()
     
-    print(f"TESTING ITEM FOUND: {roomitem.name}")
+    # print(f"TESTING ITEM FOUND: {roomitem.name}") # Works!
+    # print(f"TESTING ARRAY #S: {myhero.wpn.name}, {myhero.shld.name}, {myhero.shoe.name}")
     print(f"{myhero.name} is in the {myhero.currentRoom.name}\n{myhero.currentRoom.description}\n")
-    myweap = "NONE"
-    myshield = "NONE"
-    myshoes = "NONE"
-    for inv in myhero.item:
-        if inv.name is "Chipped Dagger" or inv.name is "Small Hatchet" or inv.name is "Table Leg" or inv.name is "Gladius":
-            myweap = inv.name
-        if inv.name is "Wooden Buckler" or inv.name is "Aegis Shield":
-            myshield = inv.name
-        if inv.name is "Discarded Sandals" or inv.name is "Leather Boots":
-            myshoes = inv.name
-    print(f"Equipped: {myweap},  {myshield},  {myshoes}")
-    print(f"ATK: {myhero.atk}, DEF: {myhero.dfns}, SPD: {myhero.spd}, HP: {myhero.hp}, COINS: {myhero.coins}     ENEMIES DEFEATED: {myhero.won}/20\n")
+    myweap = myhero.wpn.name
+    myshield = myhero.shld.name
+    myshoes = myhero.shoe.name
+
+    print(f"Equipped: {myhero.wpn.name},  {myhero.shld.name},  {myhero.shoe.name}")
+    print(f"ATK: {myhero.wpn.atk}, DEF: {myhero.shld.dfns}, SPD: {myhero.shoe.spd}, HP: {myhero.hp}, COINS: {myhero.coins}     ENEMIES DEFEATED: {myhero.won}/20\n")
+
+
+
+    if roomitem.name != "NONE" and myhero.currentRoom.name != "Outside Cave Entrance":
+        if roomitem.name == "Table Leg" or roomitem.name == "Chipped Dagger" or roomitem.name == "Small Hatchet" or roomitem.name == "Gladius":
+            print(f"As you make your way through the mess, you find: {roomitem.name} -- ATK: {roomitem.atk}")
+        elif roomitem.name == "Wooden Buckler" or roomitem.name == "Aegis Shield":
+            print(f"As you make your way through the mess, you find: {roomitem.name} -- DEF: {roomitem.dfns}")
+        elif roomitem.name == "Discarded Sandals" or roomitem.name == "Leather Boots":
+            print(f"As you make your way through the mess, you find: {roomitem.name} -- SPD: {roomitem.spd}")
+        else:
+            print(f"As you make your way through the mess, you find: {roomitem.name} -- HP: {roomitem.hp}")
+    else:
+        # This is only really checking to make sure the player is not Outside. Removing random item if so
+        roomitem = Item("NONE", "N/A", 0, 0, 0, 0)
+
+
+
     if randcoins > 0:
         if randcoins == 1:
             print(f"You see {randcoins} coin glinting in the distance.")
         else:
             print(f"You see {randcoins} coins glinting in the distance.")
+
+
+
     # R - Read input
     direct = input("Where to, boss? (n, s, e, w, c, i): ")
     # E - Evaluate
@@ -247,12 +263,11 @@ while direct != 'q':
         tempitem = Item("NONE", "N/A", 0, 0, 0, 0)
 
         fortune = random.randint(1, 4)
-        founditem = random.randint(1, 2)
 
-        if fortune == 4:
+        if fortune is 4:
             tempcoins = random.randint(1, 25)
 
-        if founditem == 2:
+        if fortune is 2 or fortune is 3:
             #25, 12, 8, 5 -- 30, 10 -- 30, 15 -- 50, 15 = 200
             whichitem = random.randint(1, 200)
             if whichitem >= 1 and whichitem <= 25:
@@ -275,7 +290,7 @@ while direct != 'q':
                 tempitem = item['milkshake']
             else:
                 tempitem = item['burger']
-        roomitem = tempitem
+        # roomitem = tempitem
         if direct is 'n':
             try:
                 myhero.currentRoom = myhero.currentRoom.n_to
@@ -283,6 +298,7 @@ while direct != 'q':
                 print("Going to:", myhero.currentRoom.name)
                 myhero.currentRoom.discovered = "true"
                 randcoins = tempcoins
+                roomitem = tempitem
                 #fortune = randint(1, 4)
                 #if fortune == 4:
                 #    randcoins = randint(1, 25)
@@ -296,6 +312,7 @@ while direct != 'q':
                 print("Going to:", myhero.currentRoom.name)
                 myhero.currentRoom.discovered = "true"
                 randcoins = tempcoins
+                roomitem = tempitem
                 #fortune = randint(1, 4)
                 #if(fortune == 4):
                 #    randcoins = randint(1, 25)
@@ -313,6 +330,7 @@ while direct != 'q':
                 print("Going to:", myhero.currentRoom.name)
                 myhero.currentRoom.discovered = "true"
                 randcoins = tempcoins
+                roomitem = tempitem
                 #fortune = randint(1, 4)
                 #if(fortune == 4):
                 #    randcoins = randint(1, 25)
@@ -330,6 +348,7 @@ while direct != 'q':
                 print("Going to:", myhero.currentRoom.name)
                 myhero.currentRoom.discovered = "true"
                 randcoins = tempcoins
+                roomitem = tempitem
                 #fortune = randint(1, 4)
                 #if(fortune == 4):
                 #    randcoins = randint(1, 25)
@@ -340,6 +359,36 @@ while direct != 'q':
                 else:
                 # P - Print
                     print("Can't go there, boss.")
+        elif direct is 'i':
+            if roomitem.name == "NONE":
+                print(f"There's nothing left to find here, boss.")
+            else:
+                if roomitem.name == myweap or roomitem.name == myshield or roomitem.name == myshoes:
+                    print(f"You already have the {roomitem.name} equipped.")
+                else:
+                    print(roomitem.description)
+                    if roomitem.name == "Table Leg" or roomitem.name == "Chipped Dagger" or roomitem.name == "Small Hatchet" or roomitem.name == "Gladius":
+                        diff = roomitem.atk - myhero.wpn.atk
+                        print(f"The {roomitem.name} can be used as a weapon. Your attack increased by {diff}")
+                        myhero.wpn = roomitem
+                    elif roomitem.name == "Wooden Buckler" or roomitem.name == "Aegis Shield":
+                        diff = roomitem.dfns - myhero.shld.dfns
+                        print(f"The {roomitem.name} can be used as a shield. Your defense increased by {diff}")
+                        myhero.shld = roomitem
+                    elif roomitem.name == "Discarded Sandals" or roomitem.name == "Leather Boots":
+                        diff = roomitem.spd - myhero.shoe.spd
+                        print(f"You can wear the {roomitem.name}. Your speed increased by {diff}")
+                        myhero.shoe = roomitem
+                    else:
+                        diff = 100 - myhero.hp
+                        if roomitem.hp > diff:
+                            print(f"You consume the {roomitem.name}, but you can only recover {diff} HP")
+                            myhero.hp = 100
+                        else:
+                            print(f"You consume the {roomitem.name} and recover {roomitem.hp} HP")
+                            myhero.hp += roomitem.hp
+                    roomitem = Item("NONE", "N/A", 0, 0, 0, 0) # removes item from the room
+                    tempitem = Item("NONE", "N/A", 0, 0, 0, 0) # prevents removed item from re-appearing if player chooses to walk into a wall
         else:
             if randcoins == 0:
                 # Did this first, so it won't run immediately AFTER player picks up the coins
@@ -351,8 +400,8 @@ while direct != 'q':
                 else:
                     print(f"{myhero.name} picks up the {randcoins} coins")
                 myhero.coins += randcoins
-                randcoins = 0
-                tempcoins = 0
+                randcoins = 0 # removes coins from the room
+                tempcoins = 0 # prevents removed coins from re-appearing
         input("Press ENTER to continue.")
     elif direct is 'q':
         pass
